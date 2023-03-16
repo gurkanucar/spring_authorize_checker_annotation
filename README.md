@@ -33,3 +33,6 @@ public void update(User user){}
 ```
 
 [example postman collection](https://github.com/gurkanucar/spring_authorize_checker_annotation/blob/main/authorize%20aspect.postman_collection.json)
+
+
+![example image](example.png)
