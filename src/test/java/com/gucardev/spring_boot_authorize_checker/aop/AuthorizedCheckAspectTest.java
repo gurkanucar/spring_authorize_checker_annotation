@@ -36,14 +36,7 @@ class AuthorizedCheckAspectTest {
     // Arrange
     AuthorizeCheck authorizeCheck = mock(AuthorizeCheck.class);
     User user = User.builder().id(USER_ID).role(Role.USER).build();
-    when(authService.getAuthenticatedUser()).thenReturn(Optional.of(user));
-    when(joinPoint.getArgs())
-        .thenReturn(
-            new Object[] {
-                RequestStubModel.builder().id(1L).restaurantId(1L).userId(USER_ID).build()
-            });
-    when(authorizeCheck.field()).thenReturn("userId");
-    when(authorizeCheck.exceptRoles()).thenReturn(new String[] {});
+    setupAuthorizeCheckExceptRolesAndFieldAndGetArgsAnd1MoreStubs(user, authorizeCheck, new String[] {}, "userId", new Object[] { RequestStubModel.builder().id(1L).restaurantId(1L).userId(USER_ID).build() });
 
     // Act
     Object result = authorizedCheckAspect.validateUser(joinPoint, authorizeCheck);
@@ -60,18 +53,7 @@ class AuthorizedCheckAspectTest {
     // Arrange
     AuthorizeCheck authorizeCheck = mock(AuthorizeCheck.class);
     User user = User.builder().id(USER_ID).role(Role.USER).build();
-    when(authService.getAuthenticatedUser()).thenReturn(Optional.of(user));
-    when(joinPoint.getArgs())
-        .thenReturn(
-            new Object[] {
-                RequestStubModel.builder()
-                    .id(1L)
-                    .restaurantId(1L)
-                    .requestUser(RequestUser.builder().userIdField(USER_ID).build())
-                    .build()
-            });
-    when(authorizeCheck.field()).thenReturn("requestUser.userIdField");
-    when(authorizeCheck.exceptRoles()).thenReturn(new String[] {});
+    setupAuthorizeCheckExceptRolesAndFieldAndGetArgsAnd1MoreStubs(user, authorizeCheck, new String[] {}, "requestUser.userIdField", new Object[] { RequestStubModel.builder().id(1L).restaurantId(1L).requestUser(RequestUser.builder().userIdField(USER_ID).build()).build() });
 
     // Act
     Object result = authorizedCheckAspect.validateUser(joinPoint, authorizeCheck);
@@ -88,12 +70,7 @@ class AuthorizedCheckAspectTest {
     // Arrange
     AuthorizeCheck authorizeCheck = mock(AuthorizeCheck.class);
     User user = User.builder().id(USER_ID).role(Role.USER).build();
-    when(authService.getAuthenticatedUser()).thenReturn(Optional.of(user));
-    when(joinPoint.getArgs())
-        .thenReturn(
-            new Object[] {RequestStubModel.builder().id(1L).restaurantId(1L).userId(1L).build()});
-    when(authorizeCheck.field()).thenReturn("userId");
-    when(authorizeCheck.exceptRoles()).thenReturn(new String[] {});
+    setupAuthorizeCheckExceptRolesAndFieldAndGetArgsAnd1MoreStubs(user, authorizeCheck, new String[] {}, "userId", new Object[] { RequestStubModel.builder().id(1L).restaurantId(1L).userId(1L).build() });
 
     assertThrows(
         RuntimeException.class,
@@ -111,14 +88,7 @@ class AuthorizedCheckAspectTest {
     // Arrange
     AuthorizeCheck authorizeCheck = mock(AuthorizeCheck.class);
     User user = User.builder().id(USER_ID).role(Role.ADMIN).build();
-    when(authService.getAuthenticatedUser()).thenReturn(Optional.of(user));
-    when(joinPoint.getArgs())
-        .thenReturn(
-            new Object[] {
-                RequestStubModel.builder().id(1L).restaurantId(1L).userId(USER_ID2).build()
-            });
-    when(authorizeCheck.field()).thenReturn("userId");
-    when(authorizeCheck.exceptRoles()).thenReturn(new String[] {"ADMIN"});
+    setupAuthorizeCheckExceptRolesAndFieldAndGetArgsAnd1MoreStubs(user, authorizeCheck, new String[] { "ADMIN" }, "userId", new Object[] { RequestStubModel.builder().id(1L).restaurantId(1L).userId(USER_ID2).build() });
 
     // Act
     Object result = authorizedCheckAspect.validateUser(joinPoint, authorizeCheck);
@@ -136,14 +106,7 @@ class AuthorizedCheckAspectTest {
     // Arrange
     AuthorizeCheck authorizeCheck = mock(AuthorizeCheck.class);
     User user = User.builder().id(USER_ID).role(Role.USER).build();
-    when(authService.getAuthenticatedUser()).thenReturn(Optional.of(user));
-    when(joinPoint.getArgs())
-        .thenReturn(
-            new Object[] {
-                RequestStubModel.builder().id(1L).restaurantId(1L).userId(USER_ID2).build()
-            });
-    when(authorizeCheck.field()).thenReturn("userId");
-    when(authorizeCheck.exceptRoles()).thenReturn(new String[] {"ADMIN"});
+    setupAuthorizeCheckExceptRolesAndFieldAndGetArgsAnd1MoreStubs(user, authorizeCheck, new String[] { "ADMIN" }, "userId", new Object[] { RequestStubModel.builder().id(1L).restaurantId(1L).userId(USER_ID2).build() });
 
     // Assert
     assertThrows(
@@ -151,5 +114,12 @@ class AuthorizedCheckAspectTest {
         () -> {
           authorizedCheckAspect.validateUser(joinPoint, authorizeCheck);
         });
+  }
+
+  private void setupAuthorizeCheckExceptRolesAndFieldAndGetArgsAnd1MoreStubs(User user, AuthorizeCheck authorizeCheck, String[] exceptRolesReturnValue, String fieldReturnValue, Object[] getArgsReturnValue) throws Throwable {
+    when(authService.getAuthenticatedUser()).thenReturn(Optional.of(user));
+    when(joinPoint.getArgs()).thenReturn(getArgsReturnValue);
+    when(authorizeCheck.field()).thenReturn(fieldReturnValue);
+    when(authorizeCheck.exceptRoles()).thenReturn(exceptRolesReturnValue);
   }
 }
